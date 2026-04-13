@@ -1,19 +1,6 @@
 ###############################################################################
 # BLOOD MODEL BUILDING — STEP 2
 # WGCNA Network Construction + Module Detection
-#
-# INPUT:  log_blood_expr_top5000.csv  (from Step 1)
-# OUTPUT: WGCNA_blood_network.RData
-#         gene_module_assignments.csv
-#         module_eigengenes.csv
-#         plots: soft_threshold, dendrogram, ME_heatmap, module_sizes
-#
-# KEY FIXES vs old pipeline:
-#   - Uses top 5000 genes (not all 21173)
-#   - minModuleSize=20 (not 50 — appropriate for 116 samples)
-#   - mergeCutHeight=0.30 (not 0.25 — less aggressive merging)
-#   - Runs on unadjusted expression (cell adjustment destroyed co-expression)
-#   - Saves soft threshold plot to help diagnose power selection
 ###############################################################################
 
 suppressPackageStartupMessages({
@@ -100,14 +87,14 @@ sft_df <- data.table(
 )
 fwrite(sft_df, file.path(WGCNA_DIR, "soft_threshold_results.csv"))
 
-# Select power: first where R2 >= 0.85 (stricter than before = 0.80)
+
 good_powers <- sft_df$Power[sft_df$ScaleFreeR2 >= 0.85]
 if (length(good_powers) == 0) {
-  # Fallback: first where R2 >= 0.80
+
   good_powers <- sft_df$Power[sft_df$ScaleFreeR2 >= 0.80]
 }
 if (length(good_powers) == 0) {
-  # Last resort: use recommended from pickSoftThreshold
+  
   softPower <- sft$powerEstimate
   cat("WARNING: R2 never reached 0.80. Using pickSoftThreshold recommendation.\n")
 } else {
@@ -159,16 +146,16 @@ cat("This is the slowest step — typically 10-30 minutes.\n\n")
 net <- blockwiseModules(
   datExpr,
   power           = softPower,
-  networkType     = "signed hybrid",   # matches soft threshold above
+  networkType     = "signed hybrid",   
   corType         = "bicor",
   TOMType         = "signed",
-  minModuleSize   = 20,        # FIXED: was 50, too large for n=116
-  mergeCutHeight  = 0.30,      # FIXED: was 0.25, less aggressive merging
-  numericLabels   = FALSE,     # FIXED: use colour labels directly
+  minModuleSize   = 20,        
+  mergeCutHeight  = 0.30,      
+  numericLabels   = FALSE,     
   pamRespectsDendro = TRUE,
   saveTOMs        = FALSE,
   verbose         = 5,
-  nThreads        = 0          # use all available
+  nThreads        = 0          
 )
 
 # Module summary
