@@ -1,15 +1,6 @@
 ###############################################################################
 # BLOOD MODEL BUILDING — STEP 3
 # Hub Gene Identification
-#
-# INPUT:  WGCNA_blood_network.RData  (from Step 2)
-# OUTPUT: blood_hub_genes.csv
-#         plots: kME distributions, hub counts per module, connectivity
-#
-# KEY FIXES vs old pipeline:
-#   - kME threshold 0.65 (was 0.60 — slightly stricter for cleaner hubs)
-#   - Reports hub count per module for transparency
-#   - Saves full kME table for downstream use
 ###############################################################################
 
 suppressPackageStartupMessages({
@@ -96,8 +87,8 @@ cat("--- Section 4: Selecting hub genes ---\n")
 hub_df <- merge(kME_dt, IMConn, by="Gene")
 hub_df <- hub_df[Module != "grey"]
 
-KME_THRESH   <- 0.65   # module membership threshold
-KWITHIN_PCTL <- 0.75   # top 25% connectivity within module
+KME_THRESH   <- 0.65  
+KWITHIN_PCTL <- 0.75   
 
 hub_list <- list()
 
