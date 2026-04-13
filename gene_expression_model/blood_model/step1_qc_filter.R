@@ -1,18 +1,7 @@
 ###############################################################################
 # BLOOD MODEL BUILDING — STEP 1
 # QC, Filtering, and Preparation
-#
-# INPUT:  GSE184050 DESeq2-normalised counts + metadata
-# OUTPUT: log_blood_expr_filtered.csv  (genes x samples, top 5000 by variance)
-#         sample_qc_metrics.csv
-#         plots: library_size, genes_detected, variance_distribution, PCA
-#
-# KEY DECISIONS vs old pipeline:
-#   - NO cell adjustment before WGCNA (it destroys co-expression structure)
-#   - Filter to top 5000 variable genes (WGCNA needs this with n=116)
-#   - Keep Age + Sex as covariates for model stage (Step 5), not regression here
 ###############################################################################
-
 suppressPackageStartupMessages({
   library(data.table)
   library(matrixStats)
@@ -181,9 +170,6 @@ cat("Log2(x+1) transformation applied\n")
 
 cat("\n--- Section 7: Selecting top 5000 variable genes ---\n")
 
-# WHY 5000: WGCNA needs n_samples >> n_genes/module_size
-# With 116 samples, >5000 genes leads to network sparsity (as seen before)
-# Top 5000 by MAD (more robust than variance for RNA-seq)
 gene_mad  <- rowMads(log_expr)
 top5000   <- order(gene_mad, decreasing=TRUE)[1:5000]
 log_expr_top <- log_expr[top5000, ]
