@@ -1,19 +1,6 @@
 ###############################################################################
 #  STEP 5
 # Blood ME Model: Multi-Model Nested LOO-CV + Ensemble
-#
-# MODELS:
-#   1. Elastic Net (EN)   — alpha/lambda tuned
-#   2. Random Forest (RF) — mtry/ntree tuned
-#   3. XGBoost (XGB)      — depth/eta/nrounds tuned
-#   4. SVM RBF            — cost/gamma tuned
-#   5. Ensemble           — average of EN + RF + XGB + SVM probabilities
-#
-# PIPELINE PER LOO FOLD (train=115, test=1):
-#   Feature filter (|r|>0.10) → collinearity removal (|r|<0.85)
-#   → Scale (fit on train only) → SMOTE (K=3, ratio=0.5) on train only
-#   → Stratified 10-fold inner CV → tune hyperparams → refit on full train
-#   → predict 1 test sample
 
 suppressPackageStartupMessages({
   library(glmnet)
